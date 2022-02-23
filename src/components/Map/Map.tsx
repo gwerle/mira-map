@@ -1,15 +1,22 @@
-import L from 'leaflet';
+import L, { LatLngTuple } from 'leaflet';
 import { useState, useEffect } from 'react';
-import { MapContainer } from 'react-leaflet';
+import { MapContainer, Marker, Popup } from 'react-leaflet';
 
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-boundary-canvas';
 import { Button, useDisclosure } from '@chakra-ui/react';
+import MarkerClusterGroup from 'react-leaflet-markercluster';
+
 import MapFilter from '../MapFilter/MapFilter';
+import OrganicEggsIcon from '../../icons/OrganicEggs';
+import CageFreeEggsIcon from '../../icons/CageFreeEggs';
+import RedneckEggsIcon from '../../icons/RedneckEggs';
+import ThreeMethodsIcon from '../../icons/ThreeMethods';
+import TwoMethodsIcon from '../../icons/TwoMethods';
 
 const mapStyle = { height: '100vh' };
 
-export default function Map(): JSX.Element {
+export default function Map({ points }: any): JSX.Element {
   const [map, setMap] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -37,17 +44,53 @@ export default function Map(): JSX.Element {
     fetchGeoJSON();
   }, [map]);
 
+  const getIcon = (id: string) => {
+    switch (id) {
+      case 'cageFreePoints':
+        return CageFreeEggsIcon;
+      case 'organicPoints':
+        return OrganicEggsIcon;
+      case 'redneckPoints':
+        return RedneckEggsIcon;
+      case 'threeMethodsPoints':
+        return ThreeMethodsIcon;
+      case 'twoMethodsPoints':
+        return TwoMethodsIcon;
+      default:
+        return TwoMethodsIcon;
+    }
+  };
+
   return (
     <>
-      <MapContainer zoom={13} style={mapStyle} whenCreated={setMap} />
-
-      <div className="leaflet-right leaflet-top">
-        <div className="leaflet-control leaflet-bar leaflet-control-zoom">
-          <Button onClick={onOpen}>Open Modal</Button>
+      <MapContainer zoom={13} style={mapStyle} whenCreated={setMap}>
+        <div className="leaflet-right leaflet-top">
+          <div className="leaflet-control leaflet-bar leaflet-control-zoom">
+            <Button onClick={onOpen}>Filtrar</Button>
+          </div>
         </div>
-      </div>
+        <MarkerClusterGroup>
+          {Object.keys(points).map(key => {
+            return points[key].features.map(point => {
+              const pointPosition = [
+                point?.geometry?.coordinates[1],
+                point?.geometry?.coordinates[0],
+              ];
 
-      <MapFilter isOpen={isOpen} onClose={onClose} />
+              return (
+                <Marker
+                  icon={getIcon(key)}
+                  position={pointPosition as LatLngTuple}
+                  key={point.properties.id}
+                >
+                  <Popup>{point?.properties?.name}</Popup>
+                </Marker>
+              );
+            });
+          })}
+        </MarkerClusterGroup>
+        <MapFilter points={points} isOpen={isOpen} onClose={onClose} />
+      </MapContainer>
     </>
   );
 }

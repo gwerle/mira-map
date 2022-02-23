@@ -1,37 +1,47 @@
 import {
   Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalOverlay,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
+  Select,
 } from '@chakra-ui/react';
-import { ModalRight } from './styled';
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  points: any;
 };
 
-const MapFilter = ({ isOpen, onClose }: Props): JSX.Element => {
+const MapFilter = ({ isOpen, onClose, points }: Props): JSX.Element => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered motionPreset="scale">
-      <ModalOverlay />
-      <ModalRight>
-        <ModalContent h="100vh" m={0} justifyContent="end">
-          <ModalCloseButton />
-          <ModalBody>abcabcv</ModalBody>
+    <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="sm">
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton />
+        <DrawerHeader>Filtrar</DrawerHeader>
 
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </ModalRight>
-    </Modal>
+        <DrawerBody>
+          <div>
+            <Select placeholder="Pesquisar produtor">
+              <option value="option1">Option 1</option>
+              <option value="option2">Option 2</option>
+              <option value="option3">Option 3</option>
+            </Select>
+          </div>
+        </DrawerBody>
+
+        <DrawerFooter>
+          <Button variant="outline" mr={3} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button colorScheme="blue">Save</Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 };
 

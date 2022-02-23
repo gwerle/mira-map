@@ -1,18 +1,50 @@
 import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
 
-export default function SignIn(): JSX.Element {
+import { CircularProgress, Flex } from '@chakra-ui/react';
+import { GetServerSideProps } from 'next';
+import { getProducerPoints } from '../services/PointsService';
+
+export default function SignIn(props): JSX.Element {
+  const { points } = props;
+
   const Map = useMemo(
     () =>
-      dynamic(
-        () => import('../components/Map/Map'), // replace '@components/map' with your component's location
-        {
-          loading: () => <p>A map is loading</p>,
-          ssr: false, // This line is important. It's what prevents server-side render
-        }
-      ),
+      dynamic(() => import('../components/Map/Map'), {
+        loading: () => (
+          <Flex
+            height="100vh"
+            width="100vw"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <CircularProgress size={100} isIndeterminate color="green.300" />
+          </Flex>
+        ),
+        ssr: false,
+      }),
     []
   );
 
-  return <Map />;
+  return <Map points={points} />;
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const organicResponse = await getProducerPoints('ORGANICO');
+  const cageFreeResponse = await getProducerPoints('LIVRE_GAIOLA');
+  const redneckResponse = await getProducerPoints('CAIPIRA');
+  const twoMethodsResponse = await getProducerPoints('2_SISTEMAS_PRODUCAO');
+  const threeMethodsResponse = await getProducerPoints('3_SISTEMAS_PRODUCAO');
+
+  return {
+    props: {
+      points: {
+        organicPoints: organicResponse.data,
+        cageFreePoints: cageFreeResponse.data,
+        redneckPoints: redneckResponse.data,
+        twoMethodsPoints: twoMethodsResponse.data,
+        threeMethodsPoints: threeMethodsResponse.data,
+      },
+    },
+  };
+};
