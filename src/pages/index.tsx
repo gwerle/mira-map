@@ -4,10 +4,13 @@ import dynamic from 'next/dynamic';
 import { CircularProgress, Flex } from '@chakra-ui/react';
 import { GetServerSideProps } from 'next';
 import { getProducerPoints } from '../services/PointsService';
+import { PointsI } from '../@types';
 
-export default function SignIn(props): JSX.Element {
-  const { points } = props;
+type Props = {
+  points: PointsI;
+};
 
+export default function SignIn({ points }: Props): JSX.Element {
   const Map = useMemo(
     () =>
       dynamic(() => import('../components/Map/Map'), {

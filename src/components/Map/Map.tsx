@@ -1,23 +1,32 @@
 import L, { LatLngTuple } from 'leaflet';
 import { useState, useEffect } from 'react';
-import { MapContainer, Marker, Popup } from 'react-leaflet';
-
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-boundary-canvas';
-import { Button, useDisclosure } from '@chakra-ui/react';
+import { MapContainer, Marker } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
+import { RiSearchLine } from 'react-icons/ri';
 
+import { Flex, IconButton, Tooltip, useDisclosure } from '@chakra-ui/react';
+
+import MapProducerField from '../MapProducerField/MapProducerField';
+import MapPopup from '../MapPopup/MapPopup';
 import MapFilter from '../MapFilter/MapFilter';
 import OrganicEggsIcon from '../../icons/OrganicEggs';
 import CageFreeEggsIcon from '../../icons/CageFreeEggs';
 import RedneckEggsIcon from '../../icons/RedneckEggs';
 import ThreeMethodsIcon from '../../icons/ThreeMethods';
 import TwoMethodsIcon from '../../icons/TwoMethods';
+import { PointsI } from '../../@types';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-boundary-canvas';
+
+type Props = {
+  points: PointsI;
+};
 
 const mapStyle = { height: '100vh' };
 
-export default function Map({ points }: any): JSX.Element {
+export default function Map({ points }: Props): JSX.Element {
   const [map, setMap] = useState(null);
+  const [showField, setShowField] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
@@ -28,7 +37,8 @@ export default function Map({ points }: any): JSX.Element {
         'https://raw.githubusercontent.com/luizpedone/municipal-brazilian-geodata/master/minified/Brasil.min.json'
       );
       const geoJSON = await response.json();
-      const osm = L.TileLayer.boundaryCanvas(
+      const tileLayer: any = L.TileLayer;
+      const osm = tileLayer.boundaryCanvas(
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           boundary: geoJSON,
@@ -44,7 +54,7 @@ export default function Map({ points }: any): JSX.Element {
     fetchGeoJSON();
   }, [map]);
 
-  const getIcon = (id: string) => {
+  const getIcon = (id: string): L.Icon<L.IconOptions> => {
     switch (id) {
       case 'cageFreePoints':
         return CageFreeEggsIcon;
@@ -64,9 +74,22 @@ export default function Map({ points }: any): JSX.Element {
   return (
     <>
       <MapContainer zoom={13} style={mapStyle} whenCreated={setMap}>
-        <div className="leaflet-right leaflet-top">
-          <div className="leaflet-control leaflet-bar leaflet-control-zoom">
-            <Button onClick={onOpen}>Filtrar</Button>
+        <div className="leaflet-left leaflet-top">
+          <div className="leaflet-control leaflet-control-zoom">
+            <Flex mt="80px">
+              <Tooltip label="Pesquisar produtor" fontSize="md">
+                <IconButton
+                  variant="outline"
+                  background="white"
+                  colorScheme="gray"
+                  aria-label="Pesquisar produtor"
+                  icon={<RiSearchLine />}
+                  onClick={() => setShowField(!showField)}
+                  borderRadius="0"
+                />
+              </Tooltip>
+              {showField ? <MapProducerField points={points} /> : null}
+            </Flex>
           </div>
         </div>
         <MarkerClusterGroup>
@@ -83,7 +106,7 @@ export default function Map({ points }: any): JSX.Element {
                   position={pointPosition as LatLngTuple}
                   key={point.properties.id}
                 >
-                  <Popup>{point?.properties?.name}</Popup>
+                  <MapPopup point={point} />
                 </Marker>
               );
             });
