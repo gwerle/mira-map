@@ -9,6 +9,7 @@ import { Flex, IconButton, Tooltip, useDisclosure } from '@chakra-ui/react';
 import MapProducerField from '../MapProducerField/MapProducerField';
 import MapPopup from '../MapPopup/MapPopup';
 import MapFilter from '../MapFilter/MapFilter';
+import MapLegend from '../MapLegend/MapLegend';
 import OrganicEggsIcon from '../../icons/OrganicEggs';
 import CageFreeEggsIcon from '../../icons/CageFreeEggs';
 import RedneckEggsIcon from '../../icons/RedneckEggs';
@@ -91,6 +92,9 @@ export default function Map({ points }: Props): JSX.Element {
               {showField ? <MapProducerField points={points} /> : null}
             </Flex>
           </div>
+        </div>
+        <div className="leaflet-left leaflet-bottom">
+          <MapLegend />
         </div>
         <MarkerClusterGroup>
           {Object.keys(points).map(key => {
