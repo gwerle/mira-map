@@ -3,14 +3,14 @@ import dynamic from 'next/dynamic';
 
 import { CircularProgress, Flex } from '@chakra-ui/react';
 import { GetServerSideProps } from 'next';
-import { getProducerPoints } from '../services/PointsService';
+import { getProducers } from '../services/PointsService';
 import { PointsI } from '../@types';
 
 type Props = {
-  points: PointsI;
+  allProducersPoints: PointsI[];
 };
 
-export default function SignIn({ points }: Props): JSX.Element {
+export default function SignIn({ allProducersPoints }: Props): JSX.Element {
   const Map = useMemo(
     () =>
       dynamic(() => import('../components/Map/Map'), {
@@ -29,25 +29,15 @@ export default function SignIn({ points }: Props): JSX.Element {
     []
   );
 
-  return <Map points={points} />;
+  return <Map points={allProducersPoints} />;
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const organicResponse = await getProducerPoints('ORGANICO');
-  const cageFreeResponse = await getProducerPoints('LIVRE_GAIOLA');
-  const redneckResponse = await getProducerPoints('CAIPIRA');
-  const twoMethodsResponse = await getProducerPoints('2_SISTEMAS_PRODUCAO');
-  const threeMethodsResponse = await getProducerPoints('3_SISTEMAS_PRODUCAO');
+  const allProducersResponse = await getProducers();
 
   return {
     props: {
-      points: {
-        organicPoints: organicResponse.data,
-        cageFreePoints: cageFreeResponse.data,
-        redneckPoints: redneckResponse.data,
-        twoMethodsPoints: twoMethodsResponse.data,
-        threeMethodsPoints: threeMethodsResponse.data,
-      },
+      allProducersPoints: allProducersResponse.data,
     },
   };
 };

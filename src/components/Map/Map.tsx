@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { MapContainer, Marker } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import { RiSearchLine } from 'react-icons/ri';
+import { BsFilter } from 'react-icons/bs';
 
 import { Flex, IconButton, Tooltip, useDisclosure } from '@chakra-ui/react';
 
@@ -15,20 +16,28 @@ import CageFreeEggsIcon from '../../icons/CageFreeEggs';
 import RedneckEggsIcon from '../../icons/RedneckEggs';
 import ThreeMethodsIcon from '../../icons/ThreeMethods';
 import TwoMethodsIcon from '../../icons/TwoMethods';
-import { PointsI } from '../../@types';
+import { PointsI, ProductionSystem } from '../../@types';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-boundary-canvas';
+import { getProducers } from '../../services/PointsService';
 
 type Props = {
-  points: PointsI;
+  points: PointsI[];
 };
 
-const mapStyle = { height: '100vh' };
+const mapStyle = { height: '100vh', backgroundColor: '#FFE9E0' };
 
 export default function Map({ points }: Props): JSX.Element {
   const [map, setMap] = useState(null);
   const [showField, setShowField] = useState(false);
+  const [filteredData, setFilteredData] = useState(points);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    if (!map) return;
+
+    map.fitBounds(filteredData);
+  }, [filteredData]);
 
   useEffect(() => {
     if (!map) return;
@@ -48,28 +57,34 @@ export default function Map({ points }: Props): JSX.Element {
         }
       );
       map.addLayer(osm);
-      const ukLayer = L.geoJSON(geoJSON);
-      map.fitBounds(ukLayer.getBounds());
+      const brLayer = L.geoJSON(geoJSON);
+      map.fitBounds(brLayer.getBounds());
     };
 
     fetchGeoJSON();
   }, [map]);
 
-  const getIcon = (id: string): L.Icon<L.IconOptions> => {
+  const getIcon = (id: ProductionSystem): L.Icon<L.IconOptions> => {
     switch (id) {
-      case 'cageFreePoints':
+      case 'LIVRE_GAIOLA':
         return CageFreeEggsIcon;
-      case 'organicPoints':
+      case 'ORGANICO':
         return OrganicEggsIcon;
-      case 'redneckPoints':
+      case 'CAIPIRA':
         return RedneckEggsIcon;
-      case 'threeMethodsPoints':
+      case '3_SISTEMAS_PRODUCAO':
         return ThreeMethodsIcon;
-      case 'twoMethodsPoints':
+      case '2_SISTEMAS_PRODUCAO':
         return TwoMethodsIcon;
       default:
         return TwoMethodsIcon;
     }
+  };
+
+  const handleFilterData = async (data: URLSearchParams): Promise<void> => {
+    const response = await getProducers(data);
+
+    setFilteredData(response.data);
   };
 
   return (
@@ -84,9 +99,10 @@ export default function Map({ points }: Props): JSX.Element {
                   background="white"
                   colorScheme="gray"
                   aria-label="Pesquisar produtor"
-                  icon={<RiSearchLine />}
+                  icon={<RiSearchLine fontSize="15" />}
                   onClick={() => setShowField(!showField)}
                   borderRadius="0"
+                  size="sm"
                 />
               </Tooltip>
               {showField ? <MapProducerField points={points} /> : null}
@@ -96,27 +112,39 @@ export default function Map({ points }: Props): JSX.Element {
         <div className="leaflet-left leaflet-bottom">
           <MapLegend />
         </div>
+        <div className="leaflet-right leaflet-top">
+          <div className="leaflet-control">
+            <Tooltip label="Filtrar dados" fontSize="md">
+              <IconButton
+                variant="outline"
+                background="white"
+                colorScheme="gray"
+                aria-label="Pesquisar produtor"
+                icon={<BsFilter fontSize="25" />}
+                onClick={onOpen}
+                size="lg"
+              />
+            </Tooltip>
+          </div>
+        </div>
         <MarkerClusterGroup>
-          {Object.keys(points).map(key => {
-            return points[key].features.map(point => {
-              const pointPosition = [
-                point?.geometry?.coordinates[1],
-                point?.geometry?.coordinates[0],
-              ];
-
-              return (
-                <Marker
-                  icon={getIcon(key)}
-                  position={pointPosition as LatLngTuple}
-                  key={point.properties.id}
-                >
-                  <MapPopup point={point} />
-                </Marker>
-              );
-            });
+          {filteredData.map(point => {
+            return (
+              <Marker
+                icon={getIcon(point.production_system_enum)}
+                position={[point.lat, point.lng] as LatLngTuple}
+                key={point.id}
+              >
+                <MapPopup point={point} />
+              </Marker>
+            );
           })}
         </MarkerClusterGroup>
-        <MapFilter points={points} isOpen={isOpen} onClose={onClose} />
+        <MapFilter
+          isOpen={isOpen}
+          onClose={onClose}
+          handleFilterData={handleFilterData}
+        />
       </MapContainer>
     </>
   );
