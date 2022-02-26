@@ -2,7 +2,9 @@ import { AxiosResponse } from 'axios';
 import { PointsI } from '../@types';
 import api from './api';
 
-export function getProducers(params): Promise<AxiosResponse<PointsI[]>> {
+export function getProducers(
+  params?: URLSearchParams
+): Promise<AxiosResponse<PointsI[]>> {
   return api.get('/producer', {
     params,
   });
