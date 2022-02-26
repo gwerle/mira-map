@@ -1,5 +1,22 @@
+import { AxiosResponse } from 'axios';
+import { PointsI } from '../@types';
 import api from './api';
 
-export function getProducerPoints(productionSystem: string): Promise<any> {
-  return api.get(`/producer?productionSystem=${productionSystem}`);
+export function getProducers(params): Promise<AxiosResponse<PointsI[]>> {
+  return api.get('/producer', {
+    params,
+  });
+}
+
+export function getProducerCities(
+  state: string
+): Promise<AxiosResponse<string[]>> {
+  const params = { state };
+  return api.get('/producer/cities', {
+    params,
+  });
+}
+
+export function getAllEggTypes(): Promise<AxiosResponse<string[]>> {
+  return api.get('/producer/egg-types');
 }

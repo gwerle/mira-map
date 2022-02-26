@@ -1,27 +1,42 @@
-export interface GeoJsonPropertiesI {
-  name: string;
-  'AREA DE FORNECIMENTO': string;
-  BAIRRO: string;
-  CIDADE: string;
-  EMAIL: string;
-  ENDEREÇO: string;
-  ESTADO: string;
-  'MÉDIA PROD. OVOS': string;
-  'QTD ANIMAIS': string;
-  'REDES SOCIAIS': string;
-  TELEFONE: string;
-  'TIPO DE OVO': string;
-}
-
-export interface GeoJsonPointI {
-  properties: GeoJsonPropertiesI;
-  geometry: number[];
-}
+export type ProductionSystem =
+  | 'CAIPIRA'
+  | 'GAIOLA'
+  | 'IN_NATURA'
+  | 'LIVRE_GAIOLA'
+  | 'ORGANICO'
+  | 'NAO_INFORMADO'
+  | '2_SISTEMAS_PRODUCAO'
+  | '3_SISTEMAS_PRODUCAO';
 
 export interface PointsI {
-  organicPoints: GeoJsonPointI;
-  cageFreePoints: GeoJsonPointI;
-  redneckPoints: GeoJsonPointI;
-  twoMethodsPoints: GeoJsonPointI;
-  threeMethodsPoints: GeoJsonPointI;
+  id: number;
+  farm_name: string;
+  address: string;
+  district: string;
+  city: string;
+  cep: number;
+  phone_number: string;
+  state: string;
+  social_media: string;
+  supply_area: string;
+  production_system_enum: ProductionSystem;
+  production_system: string;
+  egg_type: string;
+  avg_egg_production: string;
+  animals_quantity: string;
+  permission_to_send_info: boolean;
+  email: string;
+  more_information: string;
+  st_x: number;
+  st_y: number;
+  lng: number;
+  lat: number;
+}
+
+export interface FilterFormI {
+  region: string;
+  state: string;
+  city: string;
+  productionSystem: string;
+  eggType: string;
 }

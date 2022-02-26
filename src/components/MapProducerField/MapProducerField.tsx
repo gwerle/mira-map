@@ -5,7 +5,7 @@ import { useMap } from 'react-leaflet';
 import { PointsI } from '../../@types';
 
 type Props = {
-  points: PointsI;
+  points: PointsI[];
 };
 
 export default function MapProducerField({ points }: Props): JSX.Element {
@@ -14,21 +14,11 @@ export default function MapProducerField({ points }: Props): JSX.Element {
   const handleChangeProducerSelection = (
     event: ChangeEvent<HTMLSelectElement>
   ): void => {
-    const allPoints = [];
-    Object.keys(points).forEach(key => {
-      points[key].features.forEach(point => {
-        allPoints.push(point);
-      });
-    });
-
-    const selectedPoint = allPoints.find(item => {
+    const selectedPoint = points.find(item => {
       return item.id === Number(event.target.value);
     });
 
-    const location: L.LatLngExpression = [
-      selectedPoint.geometry.coordinates[1],
-      selectedPoint.geometry.coordinates[0],
-    ];
+    const location: L.LatLngExpression = [selectedPoint.lat, selectedPoint.lng];
 
     map.flyTo(location, 15);
   };
@@ -39,11 +29,10 @@ export default function MapProducerField({ points }: Props): JSX.Element {
       borderRadius="0"
       placeholder="Pesquisar produtor"
       onChange={handleChangeProducerSelection}
+      size="sm"
     >
-      {Object.keys(points).map(key => {
-        return points[key].features.map(point => {
-          return <option value={point.id}>{point?.properties?.name}</option>;
-        });
+      {points.map(point => {
+        return <option value={point.id}>{point.farm_name}</option>;
       })}
     </Select>
   );
