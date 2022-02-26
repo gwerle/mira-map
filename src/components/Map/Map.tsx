@@ -34,7 +34,7 @@ export default function Map({ points }: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || !filteredData.length) return;
 
     map.fitBounds(filteredData);
   }, [filteredData]);
