@@ -17,7 +17,9 @@ export function formatParams(params: ParamsI): URLSearchParams | ParamsI {
   Object.keys(params).forEach(key => {
     if (Array.isArray(params[key])) {
       return (params[key] as string[]).forEach((arrayKey: string) => {
-        paramsFormatted.append(key, arrayKey);
+        if (arrayKey) {
+          paramsFormatted.append(key, arrayKey);
+        }
       });
     }
 
