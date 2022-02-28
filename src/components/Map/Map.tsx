@@ -101,7 +101,7 @@ export default function Map({ points }: Props): JSX.Element {
     <>
       <MapContainer zoom={13} style={mapStyle} whenCreated={setMap}>
         <div className="leaflet-left leaflet-top">
-          <div className="leaflet-control leaflet-control-zoom">
+          <div className="leaflet-control">
             <Flex mt="80px">
               <Tooltip label="Pesquisar produtor" fontSize="md">
                 <IconButton
@@ -115,7 +115,12 @@ export default function Map({ points }: Props): JSX.Element {
                   size="sm"
                 />
               </Tooltip>
-              {showField ? <MapProducerField points={points} /> : null}
+              {showField ? (
+                <MapProducerField
+                  points={points}
+                  onClose={() => setShowField(false)}
+                />
+              ) : null}
             </Flex>
           </div>
         </div>
