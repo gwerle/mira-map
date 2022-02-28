@@ -7,6 +7,9 @@ import { BsFilter } from 'react-icons/bs';
 
 import { Flex, IconButton, Tooltip, useDisclosure } from '@chakra-ui/react';
 
+import { AiFillFilePdf } from 'react-icons/ai';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 import MapProducerField from '../MapProducerField/MapProducerField';
 import MapPopup from '../MapPopup/MapPopup';
 import MapFilter from '../MapFilter/MapFilter';
@@ -20,6 +23,7 @@ import { PointsI, ProductionSystem } from '../../@types';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-boundary-canvas';
 import { getProducers } from '../../services/PointsService';
+import generatePdf from '../../utils/generatePdf';
 
 type Props = {
   points: PointsI[];
@@ -87,6 +91,12 @@ export default function Map({ points }: Props): JSX.Element {
     setFilteredData(response.data);
   };
 
+  const printDataPdf = (): void => {
+    pdfMake.vfs = pdfFonts.pdfMake.vfs;
+    const docDefinition = generatePdf(filteredData);
+    pdfMake.createPdf(docDefinition as any).download(`Dados Mira.pdf`);
+  };
+
   return (
     <>
       <MapContainer zoom={13} style={mapStyle} whenCreated={setMap}>
@@ -123,6 +133,19 @@ export default function Map({ points }: Props): JSX.Element {
                 icon={<BsFilter fontSize="25" />}
                 onClick={onOpen}
                 size="lg"
+              />
+            </Tooltip>
+          </div>
+          <div className="leaflet-control">
+            <Tooltip label="Gerar PDF" fontSize="md">
+              <IconButton
+                variant="outline"
+                background="white"
+                colorScheme="gray"
+                aria-label="Gerar PDF"
+                icon={<AiFillFilePdf fontSize="25" />}
+                size="lg"
+                onClick={() => printDataPdf()}
               />
             </Tooltip>
           </div>
