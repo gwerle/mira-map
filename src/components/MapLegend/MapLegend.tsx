@@ -29,6 +29,13 @@ export default function MapLegend(): JSX.Element {
       </Flex>
 
       <Flex alignItems="center" p="5px">
+        <img src="assets/EmTransicao.png" alt="Em Transição" width="20px" />
+        <Text fontSize="12px" ml="5px">
+          Em Transição
+        </Text>
+      </Flex>
+
+      <Flex alignItems="center" p="5px">
         <img src="assets/Caipira.png" alt="Livre Gaiola" width="20px" />
         <Text fontSize="12px" ml="5px">
           Caipira

@@ -5,6 +5,7 @@ import OrganicEggsIcon from './OrganicEggs';
 import RedneckEggsIcon from './RedneckEggs';
 import ThreeMethodsIcon from './ThreeMethods';
 import TwoMethodsIcon from './TwoMethods';
+import InTransitionIcon from './InTransition';
 
 export default {
   TwoMethodsIcon,
@@ -14,4 +15,5 @@ export default {
   NotInformedIcon,
   OrganicEggsIcon,
   RedneckEggsIcon,
+  InTransitionIcon,
 };

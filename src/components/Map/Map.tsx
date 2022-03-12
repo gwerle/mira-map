@@ -24,6 +24,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-boundary-canvas';
 import { getProducers } from '../../services/PointsService';
 import generatePdf from '../../utils/generatePdf';
+import InTransitionIcon from '../../icons/InTransition';
 
 type Props = {
   points: PointsI[];
@@ -80,6 +81,8 @@ export default function Map({ points }: Props): JSX.Element {
         return ThreeMethodsIcon;
       case '2_SISTEMAS_PRODUCAO':
         return TwoMethodsIcon;
+      case 'EM_TRANSICAO':
+        return InTransitionIcon;
       default:
         return TwoMethodsIcon;
     }
@@ -117,7 +120,7 @@ export default function Map({ points }: Props): JSX.Element {
               </Tooltip>
               {showField ? (
                 <MapProducerField
-                  points={points}
+                  points={filteredData}
                   onClose={() => setShowField(false)}
                 />
               ) : null}
@@ -142,7 +145,7 @@ export default function Map({ points }: Props): JSX.Element {
             </Tooltip>
           </div>
           <div className="leaflet-control">
-            <Tooltip label="Gerar PDF" fontSize="md">
+            <Tooltip label="Gerar PDF dos dados filtrados" fontSize="md">
               <IconButton
                 variant="outline"
                 background="white"
