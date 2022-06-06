@@ -30,7 +30,7 @@ type Props = {
   points: PointsI[];
 };
 
-const mapStyle = { height: '100vh', backgroundColor: '#FFE9E0' };
+const mapStyle = { height: '100vh', backgroundColor: '#efefef' };
 
 export default function Map({ points }: Props): JSX.Element {
   const [map, setMap] = useState(null);
