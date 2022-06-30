@@ -130,7 +130,7 @@ const MapFilter = ({
           <DrawerCloseButton />
           <DrawerHeader fontSize="16px">Filtrar</DrawerHeader>
 
-          <DrawerBody>
+          <DrawerBody style={{ overflow: 'hidden' }}>
             <Text fontSize="14px" fontWeight={500}>
               Filtro por Localização
             </Text>
