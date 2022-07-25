@@ -34,7 +34,7 @@ export default function MapPopup({ point }: MapPopupProps): JSX.Element {
       <PopupItem label="Endereço" value={point.address} />
       <PopupItem label="Estado" value={point.state} />
       <PopupItem
-        label="Média de Produção de Ovos"
+        label="Produção de Ovos por Dia"
         value={point.avg_egg_production}
       />
       <PopupItem label="Quantidade de Animais" value={point.animals_quantity} />
