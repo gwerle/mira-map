@@ -1,7 +1,6 @@
 import L, { LatLngTuple } from 'leaflet';
 import { useState, useEffect } from 'react';
 import { MapContainer, Marker } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-markercluster';
 import { RiSearchLine } from 'react-icons/ri';
 import { BsFilter } from 'react-icons/bs';
 
@@ -158,19 +157,17 @@ export default function Map({ points }: Props): JSX.Element {
             </Tooltip>
           </div>
         </div>
-        <MarkerClusterGroup>
-          {filteredData.map(point => {
-            return (
-              <Marker
-                icon={getIcon(point.production_system_enum)}
-                position={[point.lat, point.lng] as LatLngTuple}
-                key={point.id}
-              >
-                <MapPopup point={point} />
-              </Marker>
-            );
-          })}
-        </MarkerClusterGroup>
+        {filteredData.map(point => {
+          return (
+            <Marker
+              icon={getIcon(point.production_system_enum)}
+              position={[point.lat, point.lng] as LatLngTuple}
+              key={point.id}
+            >
+              <MapPopup point={point} />
+            </Marker>
+          );
+        })}
         <MapFilter
           isOpen={isOpen}
           onClose={onClose}
