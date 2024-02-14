@@ -87,8 +87,8 @@ export default function Map({ points }: Props): JSX.Element {
     }
   };
 
-  const handleFilterData = async (data: URLSearchParams): Promise<void> => {
-    const response = await getProducers(data);
+  const handleFilterData = async (): Promise<void> => {
+    const response = await getProducers();
 
     setFilteredData(response.data);
   };
